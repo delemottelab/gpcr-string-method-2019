@@ -1,0 +1,49 @@
+{
+  "cvs": [
+    {
+      "scale": 0.5661925673484802, 
+      "periodic": true,       
+      "res2": 327, 
+      "res1": 76, 
+      "offset": 0.9345757365226746, 
+      "id": "ALA76-CYS327", 
+      "@class": "CADistanceCv"
+    },
+    {
+      "scale": 1.7603273391723633, 
+      "periodic": true,       
+      "res2": 147, 
+      "res1": 268, 
+      "offset": 1.6520638465881348, 
+      "id": "GLU268-LYS147", 
+      "@class": "CADistanceCv"
+    }, 
+    {
+      "scale": 1.1804057359695435, 
+      "periodic": true,       
+      "res2": 147, 
+      "res1": 327, 
+      "offset": 1.7898653745651245, 
+      "id": "CYS327-LYS147", 
+      "@class": "CADistanceCv"
+    },       
+    {
+      "scale": 0.7458944320678711, 
+      "periodic": true,       
+      "res2": 275, 
+      "res1": 115, 
+      "offset": 2.010006904602051, 
+      "id": "LEU115-LEU275", 
+      "@class": "CADistanceCv"
+    },  
+    {
+      "scale": 1.2011606693267822, 
+      "periodic": true,       
+      "res2": 223, 
+      "res1": 267, 
+      "offset": 0.6673485636711121, 
+      "id": "LYS267-PHE223", 
+      "@class": "CADistanceCv"
+    }
+  ]
+}

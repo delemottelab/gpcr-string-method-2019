@@ -1,0 +1,23 @@
+;Originally from charmm-gui generated file step6.0_minimization.mdp
+integrator              = steep
+emtol                   = 1000.0
+nsteps                  = 50000
+nstlist                 = 20
+cutoff-scheme           = Verlet
+rlist                   = 1.2
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+rvdw                    = 1.2
+coulombtype             = pme
+rcoulomb                = 1.2
+;
+constraints             = h-bonds
+constraint_algorithm    = LINCS
+;
+disre					= no
+disre-fc                = 1000
+disre-tau               = 0
+;define                  = -DCV_REST_ON
+nstdisreout             = 0
+
