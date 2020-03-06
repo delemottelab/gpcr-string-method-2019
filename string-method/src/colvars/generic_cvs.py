@@ -138,6 +138,52 @@ class COMDistanceCv(CV):
             self.id, len(self.query1), len(self.query2))
 
 
+class ContactCv(CV):
+    def __init__(self, id, res1, res2, scheme="closest-heavy", periodic=True):
+        CV.__init__(self, id, lambda traj: self.compute_contact(traj))
+        self.res1 = res1
+        self.res2 = res2
+        self.scheme = scheme
+        self.periodic = periodic
+
+    def __str__(self):
+        return "%s(id=%s),%s-%s,%s,periodic=%s" % (
+            self.__class__.__name__, self.id, self.res1, self.res2, self.scheme, self.periodic)
+
+    def compute_contact(self, traj):
+        res1_idx, res2_idx = None, None
+        for residue in traj.topology.residues:
+            if residue.is_protein:
+                if residue.resSeq == self.res1:
+                    res1_idx = residue.index
+                    if res2_idx is not None and res2_idx > -1:
+                        break
+                elif residue.resSeq == self.res2:
+                    res2_idx = residue.index
+                    if res1_idx is not None and res1_idx > -1:
+                        break
+        if res1_idx is None:
+            raise ValueError("No residue with id {}".format(self.res1))
+        if res2_idx is None:
+            raise ValueError("No residue with id {}".format(self.res2))
+        dists, atoms = md.compute_contacts(traj, contacts=[[res1_idx, res2_idx]], scheme=self.scheme,
+                                           periodic=self.periodic)
+        return dists
+
+
+class InverseContactCv(ContactCv):
+    """
+    Same as ContactCv but with the inverse of the distance
+    """
+
+    def __init__(self, id, res1, res2, scheme="closest-heavy", periodic=True):
+        ContactCv.__init__(self, id, res1, res2, scheme=scheme, periodic=periodic)
+
+    def compute_contact(self, traj):
+        dists = ContactCv.compute_contact(self, traj)
+        return 1 / dists
+
+
 class MaxDistanceCv(CV):
     """
     Max distance between any two atoms on the two residues
@@ -165,7 +211,7 @@ class StringIndexCv(DependentCV):
                              lambda cv_evals: self.compute_string_index(cv_evals),
                              simulation_cvs)
         self.stringpath = stringpath
-        self.interpolate=interpolate
+        self.interpolate = interpolate
 
     def compute_string_index(self, cv_evals):
         # For every frame, find closest point on string
@@ -177,15 +223,16 @@ class StringIndexCv(DependentCV):
             if self.interpolate:
                 if closest == 0:
                     second_closest = 1
-                elif closest == len(self.stringpath)-1:
-                    second_closest = closest-1
+                elif closest == len(self.stringpath) - 1:
+                    second_closest = closest - 1
                 else:
-                    if dists[closest +1] < dists[closest-1]:
+                    if dists[closest + 1] < dists[closest - 1]:
                         second_closest = closest + 1
                     else:
                         second_closest = closest - 1
                 total_dist = dists[closest] + dists[second_closest]
-                indices[i] = closest*(1-dists[closest]/total_dist) + second_closest*(1-dists[second_closest]/total_dist)
+                indices[i] = closest * (1 - dists[closest] / total_dist) + second_closest * (
+                            1 - dists[second_closest] / total_dist)
             else:
                 indices[i] = closest
         return indices
@@ -197,4 +244,4 @@ class ColorCv(CV):
         self.colorid = "<|color " + str(color1) + "-" + str(color2) + " distance|>"
 
     def __str__(self):
-        return "CV(id=%s,color=%s)" % (self.id, self.colorid if hasattr(self,'colorid') else self.id)
+        return "CV(id=%s,color=%s)" % (self.id, self.colorid if hasattr(self, 'colorid') else self.id)
